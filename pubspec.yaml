@@ -1,5 +1,6 @@
+cat << 'EOF' > pubspec.yaml
 name: carrom_overlay_app
-description: "A new Flutter project with floating overlay aim for Carrom Pool."
+description: "Carrom Pool Aim Assistant Overlay App"
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -9,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_overlay_window: ^0.4.6
+  flutter_overlay_window: any
 
 dev_dependencies:
   flutter_test:
@@ -18,3 +19,4 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+EOF
