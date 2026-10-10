@@ -1,82 +1,102 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
-void main() => runApp(const AimAIApp());
-
-@pragma("vm:entry-point")
-void overlayMain() {
-  runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: CarromOverlayScreen()));
+void main() {
+  runApp(const MyApp());
 }
 
-class AimAIApp extends StatelessWidget {
-  const AimAIApp({super.key});
+@pragma('vm:entry-point')
+void overlayMain() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: CarromOverlayWidget(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(useMaterial3: true),
-      home: const AimHome(),
+      title: 'Carrom Overlay',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const HomeScreen(),
     );
   }
 }
 
-class AimHome extends StatefulWidget {
-  const AimHome({super.key});
-  @override
-  State<AimHome> createState() => _AimHomeState();
-}
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
-class _AimHomeState extends State<AimHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('🎯 AimAI Carrom Controller'), centerTitle: true),
+      appBar: AppBar(title: const Text('Carrom Pool Aim Assistant')),
       body: Center(
-        child: FilledButton.icon(
-          onPressed: () async {
-            if (!await FlutterOverlayWindow.isPermissionGranted()) {
-              await FlutterOverlayWindow.requestPermission();
-            } else {
-              await FlutterOverlayWindow.showOverlay(height: 500, width: 400);
-            }
-          },
-          icon: const Icon(Icons.layers),
-          label: const Text('START OVERLAY AIM'),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Carrom Assistant Ready!',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  final status = await FlutterOverlayWindow.isPermissionGranted();
+                  if (!status) {
+                    await FlutterOverlayWindow.requestPermission();
+                  } else {
+                    if (await FlutterOverlayWindow.isActive() == false) {
+                      await FlutterOverlayWindow.showOverlay(
+                        height: 400,
+                        width: 400,
+                        alignment: OverlayAlignment.center,
+                        visibility: NotificationVisibility.visibilityPublic,
+                        flag: OverlayFlag.defaultFlag,
+                      );
+                    }
+                  }
+                },
+                child: const Text('Start Overlay'),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class CarromOverlayScreen extends StatefulWidget {
-  const CarromOverlayScreen({super.key});
-  @override
-  State<CarromOverlayScreen> createState() => _CarromOverlayScreenState();
-}
+class CarromOverlayWidget extends StatelessWidget {
+  const CarromOverlayWidget({Key? key}) : super(key: key);
 
-class _CarromOverlayScreenState extends State<CarromOverlayScreen> {
-  Offset striker = const Offset(0.50, 0.84);
-  final List<Offset> coins = [const Offset(0.50, 0.50), const Offset(0.45, 0.46)];
-  
   @override
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
       child: Container(
-        decoration: BoxDecoration(color: Colors.black87, border: Border.all(color: Colors.red, width: 2)),
-        child: Column(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.close, color: Colors.white),
-              onPressed: () => FlutterOverlayWindow.closeOverlay(),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.red, width: 3),
+          borderRadius: BorderRadius.circular(15),
+          color: Colors.black.withOpacity(0.2),
+        ),
+        child: const Center(
+          child: Text(
+            '🎯 Aim Line Active',
+            style: TextStyle(
+              color: Colors.yellow,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
-            const Expanded(
-              child: Center(
-                child: Text('Aim Overlay Active', style: TextStyle(color: Colors.white)),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
